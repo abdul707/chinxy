@@ -1,0 +1,50 @@
+{% load staticfiles %}
+<html>
+<head>
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<title>{{ appname }}</title>
+</head>
+<body>
+	{% if loggedin %}
+	<nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse" style="margin-bottom: 0px;">
+		<div class="container">
+			<div class="navbar-header">
+				<div class="navbar-brand">Chinxy</div>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="{% url 'matches' %}">Matches</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="{% url 'profile' %}"><span class="glyphicon glyphicon-user"></span>Profile</a></li>
+				<li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+			</ul>
+		</div>
+	</nav>
+	{% else %}
+	<nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse" style="margin-bottom: 0px;">
+		<div class="container">
+			<div class="navbar-header">
+				<div class="navbar-brand">Chinxy</div>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="{% url 'index' %}">Home</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="{% url 'register' %}"><span class="glyphicon glyphicon-user"></span>Sign Up</a></li>
+				<li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span>Login</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div class="jumbotron jumbotron-fluid text-center" style="background-color: #2370ed; height: 240px; margin-bottom: 0px;">
+	  <h1 style="color: #ffffff">Chinxy :)</h1>
+	  <p style="color: #ffffff;">1.6 million people in the UK met their partner on Chinxy*</p>
+	</div>
+  {% endif %}
+	{% block content %}
+	{% endblock %}
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script src="{% static '/scripts.js' %}"></script>
+</body>
+</html>

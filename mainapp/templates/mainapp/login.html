@@ -1,0 +1,28 @@
+{% extends "mainapp/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<main class="container">
+  <div class="jumbotron" style="width: 985px; margin-left: 84px;">
+    <main class="container">
+      <h2 style="font-size: 44px; margin-top: 0px;">Login</h2>
+      <p class="lead">&#8658; Please fill in your credentials to login.</p>
+    <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        <label>Username:</label>
+        <div class="input-group" style="margin-bottom: 16px;">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+          <div class="form-group">{{ form.username }}<div class="inline" id="info" style="font-size: 20px;"></div></div>
+        </div>
+        <label>Password:</label>
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+          <div class="form-group">{{ form.password }}</div>
+        </div><br>
+        <button type="submit" class="btn btn-primary btn-lg">Log In</button><br><br>
+        <p class="lead">&#8658; Not a member yet? <u><a href="{% url 'register' %}">Register for free!</a></u></p>
+      </form>
+    </main>
+  </div>
+</main>
+{% endblock %}

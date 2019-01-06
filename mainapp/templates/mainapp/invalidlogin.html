@@ -1,0 +1,15 @@
+{% extends "mainapp/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<main class="container">
+  <div class="jumbotron" style="width: 985px; margin-left: 84px;">
+    <main class="container">
+			<div class="row">
+        <p style="font-size: 45px;">To view this page you must be logged in!</p><br>
+        <p style="font-size: 20px">Would you like to login again? <u><a href="{% url 'login' %}">Click here!</a></u></p>
+      </div>
+		</main>
+	</div>
+</main>
+{% endblock %}

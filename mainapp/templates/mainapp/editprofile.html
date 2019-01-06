@@ -1,0 +1,35 @@
+{% extends "mainapp/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<main class="container">
+  <div class="jumbotron" style="width: 1050px; margin-left: 60px;">
+    <main class="container">
+      <h2 style="font-size: 44px; margin-top: 6px;">Update your Account</h2>
+      <p class="lead">&#8658; Update your Basic info (e.g. email, gender and profile image). Edit your Personal info (e.g. hobbies).</p>
+      <form action="{% url 'editprofile' %}" enctype="multipart/form-data" method='POST'>
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label>Email Address</label>
+            <div class="form-group">{{ form.email }}</div>
+          </div>
+          <div class="form-group col-md-4">
+            <label>Gender</label>
+            {{ form.gender }}
+          </div>
+          <div class="form-group col-md-4">
+            <label>Profile Image</label>
+            {{ form.file }}<br>
+          </div>
+          <div class="form-group col-md-12">
+            <label>Select one (or more) hobbies from the given list</label>
+            {{form.hobbies}}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Update</button>
+      </form>
+    </main>
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "mainapp/base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<main class="container">
+  <div class="jumbotron" style="width: 1050px; margin-left: 53px;">
+    <main class="container">
+      <h2 style="font-size: 44px; margin-top: 6px;">Hello, {{ username }}!</h2>
+      <p class="lead">&#8658; Discover profiles according to your criteria. No matter where in the country you are, we have UK singles looking to meet new matches today.</p>
+      <h2 style="font-size: 27px; margin-bottom: 13px;">Filter by gender and/or age...</h2>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>From</label>
+          <input type="value" class="form-control" id="minAge" placeholder="e.g. only ages between 30 and 50">
+        </div>
+        <div class="form-group col-md-6">
+          <label>To</label>
+          <input type="value" class="form-control" id="maxAge" placeholder="To">
+        </div>
+      </div>
+      <div class="form-group col-md-6">
+        <label>Gender</label>
+        <select id = "gender" class="form-control" style="width: 43%;">
+           <option value="">All</option>
+           <option value="Female">Female</option>
+           <option value="Male">Male</option>
+           <option value="Other">Other</option>
+        </select>
+      </div><br>
+      <div id="profiletable"></div>
+    </main>
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+//Establishing variables that will help us filter users based on age and gender
+var minAge = 0;
+var maxAge = 220;
+var gender = "";
+
+$("#gender").change(function() {
+  gender = this.value.toLowerCase();
+  filtering();
+})
+//Variables established above are now used for filtering
+function filtering() {
+  if(maxAge == ""){
+    maxAge = 220
+  }
+
+  var rows = $("#myTable").find("tr");
+  rows.hide();
+  rows.filter(function () {
+      if(gender == "") return range(minAge,maxAge,parseInt($(this).find('.age').text())) && $(this).find('.gender').text().toLowerCase().indexOf(gender) > -1;
+      return range(minAge,maxAge,parseInt($(this).find('.age').text())) && $(this).find('.gender').text().toLowerCase() == gender;
+
+    }).show()
+}
+//filtering function is called and the minAge is updated
+$("#minAge").keyup(function(){
+  minAge = $('#minAge').val();
+  filtering();
+})
+//filtering function is called and the maxAge is updated
+$("#maxAge").keyup(function(){
+  maxAge = $('#maxAge').val();
+  filtering();
+})
+
+function range(min, max, z){
+  if(z <= max && z >= min) return true;
+  else return false;
+}
+//This will create a table which includes all other members
+function profileTable(response){
+  current = new Date(Date());
+  var table = "<table class='table table-bordered' style='background-color: #ffffff;'><thead><tr><th>Picture</th><th>Username</th><th>Gender</th><th>Age</th><th>Common Hobbies (in descending order)</th><th>Like/Dislike</th></tr></thead><tbody id='myTable'>"
+  for (var i = 0; i < response.length; i++){
+    dob = new Date(response[i].dob);
+    age = current.getYear() - dob.getYear()
+    if(response[i].liked == true){
+      table += "<tr><td align='center'><img src='"+response[i].image+"' class='img-circle rounded-circle' height=80 width=80></td>" + "<td class='Username'>" +response[i].name+ "</td><td class='gender'>" +response[i].gender+ "</td><td class='age' align='center'>" +age+ "</td><td style='overflow-wrap: break-word; word-break: break-all;'>" +response[i].sameHobbies+ "</td><td align='center'><span class='btn btn-danger btn-block' id='dislikebutton' value=" +response[i].id+ ">Dislike</span></tr>";
+      }
+    else{
+      table += "<tr><td align='center'><img src='"+response[i].image+"' class='img-circle rounded-circle' height=80 width=80></td>" + "<td class='Username'>" +response[i].name+ "</td><td class='gender'>" +response[i].gender+ "</td><td class='age' align='center'>" +age+ "</td><td style='overflow-wrap: break-word;word-break: break-all;'>" +response[i].sameHobbies+ "</td><td align='center'><span class='btn btn-success btn-block' id='likebutton' value=" +response[i].id+ ">Like</span></tr>";
+      }
+  }
+  table += "</tbody></table>"
+  $("#profiletable").html(table);
+  filtering();
+}
+//Sends ID of member that was liked
+$(document).on('click', '#likebutton' , function(action){
+  pk = action.currentTarget.attributes[2].value;
+  var token = '{{csrf_token}}';
+  var ids = {"likeID": pk}
+    $.ajax({
+      headers: {"X-CSRFToken" : token},
+      type: 'POST',
+      url: '/likeUser/',
+      datatype: 'json',
+      data: ids,
+      success: refreshTable,
+      error: function(e){console.log("error: " + e)},
+  });
+});
+//Sends ID of member that was disliked
+$(document).on('click', '#dislikebutton', function(action){
+  pk = action.currentTarget.attributes[2].value;
+  var token = '{{csrf_token}}';
+  var ids = {"dislikeID": pk}
+    $.ajax({
+      headers: {"X-CSRFToken" : token},
+      type: 'POST',
+      url: '/likeUser/',
+      datatype: 'json',
+      data: ids,
+      success: refreshTable,
+      error: function(e){console.log("error: " + e)},
+  });
+});
+//Refreshes table by calling the getUsers function
+function refreshTable(response){getUsers();}
+
+function getUsers(){
+      var token = '{{csrf_token}}';
+    $.ajax({
+      headers: {"X-CSRFToken" : token},
+      type: 'GET',
+      url: '/getCommonHobbies',
+      success: profileTable,
+      error: function(e){console.log("error: " + e)},
+    });
+  }
+
+$("#profiletable").ready(getUsers());
+</script>
+{% endblock %}
